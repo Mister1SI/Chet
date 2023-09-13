@@ -20,7 +20,7 @@ def listenToServer(client):
 
 
 def serverRequest(request):
-    if request == b"username_request":
+    if request[0] == b"username_request":
         c_socket.send(username.encode())
 
 
