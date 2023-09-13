@@ -2,13 +2,17 @@ import socket
 import threading
 
 run = True
+sock_list = []
+
 
 #Code for the thread that waits for conections
 #It's so the main thread doesn't hang and can process messages
-def waitForConnection(socket, glob_socket) -> str:
+def waitForConnection(socket, c_sock_list) -> None:
     sock, sock_info = socket.accept()
-    glob_socket = sock
-    return f"Connection recieved by {sock_info[0]} on port {sock_info[1]}"
+    c_sock_list.append((sock, sock_info))
+    print(f"Connection recieved by {sock_info[0]} on port {sock_info[1]}")
+    
+#def newClient(client):
 
 
 
@@ -23,15 +27,20 @@ s_socket.bind((s_addr, int(s_port)))
 s_socket.listen(4)
 
 #Start the thread that waits for connections
-waiting_thread = threading.Thread(target=waitForConnection)
+waiting_thread = threading.Thread(target=waitForConnection, args=(s_socket, sock_list))
 waiting_thread.start()
 print("Started waiting for connections...")
 
 
 while run:
-    pass
+    for c in sock_list:
+        data = c[0].recv(1024)
+        if data != b'':
+            print(f"{c[1]} {data.decode()}")
+        
 
 
 waiting_thread.join()
-
-
+for s in sock_list:
+    s[0].close()
+s_socket.close()
