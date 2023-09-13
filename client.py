@@ -11,9 +11,9 @@ def listenToServer(client):
             data = client.recv(1024)
             if not data:
                 break
-			msgSend = False
+            msgSend = False
             serverRequest(data)
-			msgSend = True
+            msgSend = True
         except Exception as e:
             print(f"Server request error: {str(e)}")
             break
@@ -35,7 +35,7 @@ input()
 c_socket.connect((s_address, int(s_port)))
 
 #Set up the thread that listens for server requests
-listeningThread = threading.Thread(target=listenToServer, args=(c_socket))
+listeningThread = threading.Thread(target=listenToServer, args=(c_socket,))
 listeningThread.start()
 
 
@@ -44,7 +44,7 @@ while True:
     if msgSend:
         message = input()
 
-        if message == "terminate" && msgSend:
+        if message == "terminate" and msgSend:
             c_socket.send(b"Disconnecting from server")
             break
         else:

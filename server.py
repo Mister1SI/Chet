@@ -19,8 +19,11 @@ sock_list = []
 #It's so the main thread doesn't hang and can process messages
 def waitForConnection(socket, c_sock_list) -> None:
     sock, sock_info = socket.accept()
-    c_sock_list.append((sock, sock_info))
     print(f"Connection recieved by {sock_info[0]} on port {sock_info[1]}")
+    sock.send(b"username_request")
+    username = sock.recv(1024)
+    c_sock_list.append((sock, sock_info, username.decode()))
+
     
 #def newClient(client):
 
