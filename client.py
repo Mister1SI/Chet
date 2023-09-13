@@ -20,9 +20,12 @@ def listenToServer(client):
 
 
 def serverRequest(request):
-    if request[0] == b"username_request":
+    text = request.decode()
+    if text == "username_request":
         c_socket.send(username.encode())
-
+    elif text[0:3] == "msg":
+        msg = text[3:]
+        
 
 print("===========\nCHET CLIENT\n===========")
 

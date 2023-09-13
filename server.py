@@ -20,13 +20,19 @@ sock_list = []
 def waitForConnection(socket, c_sock_list) -> None:
     sock, sock_info = socket.accept()
     print(f"Connection recieved by {sock_info[0]} on port {sock_info[1]}")
-    sock.send((b"username_request",))
+    sock.send(b"username_request")
     username = sock.recv(1024)
     print(f"({username.decode()}) joined the chat")
     c_sock_list.append((sock, sock_info, username.decode()))
 
 
 #def newClient(client):
+
+def sendToClients(uname, msg):
+    fullmsg = b'msg' + uname + b'\x00' + msg
+    for c in sock_list:
+        c.send(fullmsg)
+    pass
 
 #Console & setup
 print("==========\nCHET SERVER\n==========")
