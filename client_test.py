@@ -4,8 +4,7 @@ import tkinter as tk
 
 msgSend = True
 
-
-#Function that listens for requests from the server
+# Function that listens for requests from the server
 def listenToServer(client):
     while True:
         try:
@@ -19,14 +18,24 @@ def listenToServer(client):
             print(f"Server request error: {str(e)}")
             break
 
-
 def serverRequest(request):
     text = request.decode()
     if text == "username_request":
         c_socket.send(username.encode())
-    elif text[0:3] == "msg":
-        msg = text[3:]
-        
+        winprint("Successfully connected to the server")
+    elif text.startswith("msg"):
+        nullindex = text.find('\x00')
+        if nullindex != -1:
+            uname = text[3:nullindex]
+            msg = text[nullindex + 1:]
+            # Now you can use uname and msg as needed
+            winprint(f"Received message from {uname}: {msg}")
+
+
+# Function to print messages in the tkinter window
+def winprint(msg):
+    msgbox.insert(tk.END, msg + '\n')
+    msgbox.see(tk.END)  # Automatically scroll to the end
 
 print("===========\nCHET CLIENT\n===========")
 
@@ -38,30 +47,35 @@ print("Press enter to attempt a connection")
 input()
 c_socket.connect((s_address, int(s_port)))
 
-#Set up the thread that listens for server requests
+# Set up the thread that listens for server requests
 listeningThread = threading.Thread(target=listenToServer, args=(c_socket,))
 listeningThread.start()
 
-#Set up the client window
-#c_window = tk.Tk()
-#c_window.title("Chet Client")
-#msgbox = tk.Text(c_window, height=10, width=40)
-#msgbox.pack()
+# Set up the client window
+c_window = tk.Tk()
+c_window.title("Chet Client")
+msgbox = tk.Text(c_window, height=10, width=40)
+msgbox.pack()
 
-#def winprint(msg):
-#    msgbox.insert(tk.END, msg + '\n')
-#    msgbox.see(tk.END)
+# Entry for user messages
+entry = tk.Entry(c_window)
+entry.pack()
 
-#c_window.mainloop()
-print("Enter messages:")
-while True:
+def send_message(event):
+    global msgSend
     if msgSend:
-        message = input()
+        message = entry.get()
+        entry.delete(0, tk.END)
 
         if message == "terminate" and msgSend:
             c_socket.send(b"Disconnecting from server")
-            break
         else:
             c_socket.send(message.encode())
 
+# Bind the Enter key to send messages
+entry.bind("<Return>", send_message)
+
+c_window.mainloop()
+
+# Close the socket when the GUI is closed
 c_socket.close()

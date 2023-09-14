@@ -40,8 +40,8 @@ s_addr = input("Enter the address for this server: ")
 s_port = input("Enter the port for this server: ")
 
 #Set up the manager connection
-m_port = input("\nEnter the port for the server manager: ")
-m_password = input("Enter the password for the server manager: ")
+#m_port = input("\nEnter the port for the server manager: ")
+#m_password = input("Enter the password for the server manager: ")
 
 #Setup the server socket object
 s_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -59,6 +59,7 @@ while run:
         data = c[0].recv(1024)
         if data != b'':
             print(f"[{c[2]}] {data.decode()}")
+			
 
 waiting_thread.join()
 for s in sock_list:
