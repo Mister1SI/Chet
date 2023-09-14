@@ -1,5 +1,6 @@
 import socket
 import threading
+import tkinter as tk
 
 msgSend = True
 
@@ -41,8 +42,17 @@ c_socket.connect((s_address, int(s_port)))
 listeningThread = threading.Thread(target=listenToServer, args=(c_socket,))
 listeningThread.start()
 
+#Set up the client window
+c_window = tk.Tk()
+c_window.title("Chet Client")
+msgbox = tk.Text(c_window, height=10, width=40)
+msgbox.pack()
 
-print("Enter messages:")
+def winprint(msg):
+	msgbox.insert(tk.END, msg)
+	
+
+winprint("Enter messages:")
 while True:
     if msgSend:
         message = input()
